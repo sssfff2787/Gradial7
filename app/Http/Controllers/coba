@@ -7,7 +7,7 @@ class Coba extends Controller
 {
     public function index(){
         $sales1 = Sales1Model::all();
-
+        return $sales1:
     }
     
 }
