@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('sales3', function (Blueprint $table) {
+            $table->increments('idsales');
+            $table->foreignId('kode_sales3');
+            $table->foreignId('idsepatu3');
+            $table->integer('size');
+            $table->integer('qty');
+            
+        
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('sales3');
+    }
+};

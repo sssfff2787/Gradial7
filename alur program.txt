@@ -1,0 +1,315 @@
+alur program gradial
+
+http://localhost/Gradial4/public/order
+pertama ke web.php (route di arahkan ke SalesOrderController)
+SalesOrderController ke index 
+view ke Order.index.blade.php
+saat di load maka jalakan JS 
+
+1. //saat pertama kali url=order jalankan tabpanel1.click
+jQuery(document).ready(function($) {
+    $("#tabpanel1").click(); //menjalankan function class tabpanel    
+});
+
+lalu ke JS
+
+//pertama kali id tabpanel click dijalankan yang class tabpanel, funtion ini sesuai dengan tabpanel yg di klik
+// mengembalikan view sales1.index.blade.php
+$(".tabpanel").click(function(){
+    $("#loadingpanel").show();
+    var panelke = $(this).attr('panelke');
+    $('#tabel1').dataTable().fnDestroy();
+    
+    $("#isipanel").html("");    
+    // console.log("ok1");
+    var baseurl = '{{url('/')}}';
+    $.get(baseurl+'/order/'+panelke, function (data) {
+      $("#isipanel").html(data);
+      $("#loadingpanel").hide();
+      // console.log(data);
+    });
+});
+
+ini ke SalesOrderController ke function show
+lalu ke case panel1
+switch ($idarr[0]) {
+            case 'panel1': //saat pertama kali url order ke index (view order.index), mengembalikan view sales1.index.blade.php
+                // return $id;
+                $this->model = new Sales1Model();
+                $data['model']=  $this->model->getAll();
+
+                // return $data['model'];
+                // return response()->json($data['model']);
+                return view('Order.tabelSales1', compact('data'));
+                break;
+ke view Order.tabelSales1.blade.php (tabel sales1)
+kembali ke Order.index
+tampilkan tabel
+
+2. jika tombol tambah di klik
+ke JS
+//ketika tombol tambah di tambah buka form create Sales1 
+$(document).on('click','#tambah', function(e){
+  e.preventDefault(); 
+  $('#loadingpanel').show();
+  $('#loadingpanel').hide();
+
+  var baseurl = '{{url('/')}}';
+  $.get(baseurl+'/order/pobaru', function(data){
+    $('#modalcreateisi').html(data);
+    console.log('tambah');
+  });
+  
+  $('#show').html('Halo');
+  $('#modalCreate').modal('show');
+  
+});
+
+ke function show case pobaru di SalesOrderControler 
+ke view Order.Form.blade.php (menampilkan form add sales1)
+hasilnya di masukkan ke modal
+
+jika tombol simpan di form add sales1 di klik
+
+//jika tombol Simpan di form create selas1 di klik simpan data ke database(tabel sales1)
+            $(document).on('click', '#posimpan', function (e) {
+                var isvalidate = $("#formInputSales1")[0].checkValidity();
+                if (isvalidate) {
+                    e.preventDefault(); //PENTING
+                    // $(this).attr("disabled",true); //setelah diklik disable
+                    // var formData = $('#formInputSales1').serialize();
+                    var formData = new FormData($("#formInputSales1")[0]); // khusus form dengan file upload
+                    console.log(formData);
+                    console.log('jalan');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{url('/')}}/{{$url}}/adddatasales1',
+                        data : formData,
+                        processData: false,
+	    	                contentType: false,
+                        success: function(data) {
+                          var baseurl = '{{ url('/') }}';
+                          console.log(data);
+                          $('#modalCreate').modal('hide');
+                          $("#loadingpanel").hide();
+                          alert('data berhasil di simpan..!');
+                          
+
+                        },
+                        error: function (request, status, error) {
+                            alert(request.responseText);
+                        }
+                    });  
+                }
+            });
+
+penjelasan JS dia tas pertama validasi formInputSales1 jika banyak maka ambil yg pertama (index 0)
+jika true maka :
+jangan reload halmanya
+membuat objek dari FormData dari form di atas, formData untuk menampung data yang di input dari form
+jadi biasanya kita menangkap data dari form masih manual ($_post->nama) sekarang tidak perlu karena 
+sudah di tangani oleh formData
+setelah itu jalankan ajax
+action Post
+url : di arahkan ke url order/adddatasales1
+data yang di kirim adalah data hasil dari formdata
+jika kita buka route (web.php)
+Route::post('/order/adddatasales1', [SalesOrderController::class, 'adddatasales1'])->name('adddatasales1');
+yang artinya ke funtion adddatasales1 di SalesOrderController 
+kita lihat urlnya 
+url: '{{url('/')}}/{{$url}}/adddatasales1', ini bisa di tulis
+url: "{{ route('adddatasales1') }}",
+karena di web.php route kita kasih name('adddatasales1');
+
+di function adddatasales1 di SalesOrderController 
+    public function adddatasales1(Request $request) 
+    {
+        // return $request;
+        // $tgl = $request->tanggal ? date_format(date_create_from_format('d M Y', $request->tanggal), 'Y-m-d') : '';
+        // return $tgl;
+        // return $request->toko;
+
+        $this->model = new Sales1Model();
+        $data['model']=  $this->model->saveData($request);
+        return $data['model'];
+    }
+tujuanya untuk menyimpan data ke database
+pertama tanggal format yg di input dan yg di database berbeda maka kit akita format dl sesuai dg yg data base agar
+bisa di simpan.
+format tanggal bisa di lakukan di controller atau model tapi lebih baik di model
+    public function saveData($request )
+    {
+        // return $this->table;
+        $tgl = $request->tanggal ? date_format(date_create_from_format('d M Y', $request->tanggal), 'Y-m-d') : '';
+        DB::table("$this->table")->insert([
+            'tanggal' => $tgl,            
+            'kode_toko2' => $request->toko,            
+            'ketsales' => $request->ket,            
+        ]);
+
+    }
+setelah di simpan maka kembali ke JS yang di order.index
+tampilkan data
+
+3.jika tombol show di klik
+
+//jika tombol show di dalam tabel diklik tampilkan view Order.index3.blade.php ( tampilkan form input sales2)            
+$(document).on('click','.btnshow', function(e){
+  //  alert('halo');
+  e.preventDefault();
+  var myModal = new bootstrap.Modal(document.getElementById('modalCreate'));
+
+  $('#loadingpanel').show();
+  console.log("baris");
+  var baseurl = '{{url('/')}}';
+    $.get(baseurl+'/order/pobarutampil', function (data) {
+      $("#isi2").html(data);
+      // myModal.hide();
+      
+      $("#loadingpanel").hide();
+      $("#isi1").hide();
+      $("#isi3").hide();
+      $("#isi2").show();
+      console.log(data);
+      // $('#show').html("halo");
+      $('#modalCreate').modal('hide');
+    });
+});
+
+ke function show case pobarutampil di contoller
+            case 'pobarutampil'://tombol show di klik
+                // return $id;
+                
+                $data['url']= $this->url;
+                $this->model = new BrandModel();
+                $data['model']= $this->model::with(['Sepatu1Model'])->get();
+                // $data['model']= response()->json($data['model']);
+                
+                // return $data['model'];
+                // return response()->json($data['model']);
+                // return view('Order.SO.Form', compact('data'));
+                return view('Order.inputDataSales3', compact('data'));
+                break;
+
+ke view inputDataSales3
+
+jika brand di pilih ke JS di inputDataSales3
+        $(document).on('change','#brand2', function(e){
+          console.log('jalan event');
+          // $("#selectsepatu1").show();
+            
+          var kode_brand = $(this).val();
+          // console.log(kode_brand);
+          var baseurl = '{{url('/')}}';
+              $.get(baseurl+'/order/sepatu2_'+kode_brand, function (data) {
+ 
+                $("#sepatu2").html(data);
+                $("#selectsepatu1").show();
+                $("#btnGo2").show();
+ 
+                console.log(data);
+              });
+
+        });
+lalu ke function show case sepatu2 di contoller untuk menghasilkan artikel berdasarkan brand
+lalu ke view selectBrand2
+
+jika tombol go di klik
+        //ini view order.tabelSales1.blade.php
+        $(document).on('click','#btnGo', function(e){
+          e.preventDefault();
+          console.log('jalan event 1');
+            
+          var kode_artikel = $("#selectsepatu2").val();
+          console.log(kode_artikel);
+          
+          var idGo = $(this).attr("kodeGo");
+          console.log(idGo);
+        
+          
+          var baseurl = '{{url('/')}}';
+              $.get(baseurl+'/order/tabel_'+kode_artikel+'_'+idGo, function (data) {
+                console.log(data);
+                $("#isitabel").append(data);
+                $("#tabel").show();
+                $("#peringatan").show();
+                $("#footer").show();
+
+              });
+
+          idGo++;
+          $(this).attr("kodeGo",idGo)
+          console.log(idGo);
+
+        });
+
+ke function show case tabel di contoller
+
+ case 'tabel':
+                //  return $id2;
+                
+                 $data['idGo']=$id2;
+                // return $data['idGo'];
+                $data['url']='order';
+                $data['model']= Sepatu2Model::find($id1);
+                $data['model2']= Sepatu2Model::find($id1)->Sepatu1Model->load('BrandModel');
+                // return $data['model2']= BrandModel::find($data['model']->Sepatu1model->kode_sepatu1);
+                // return $data['model']= $data['model']::with('Sepatu1Model')->get();
+
+                // return view('Order.SO.tabelInput', compact('data'));
+                return view('Order.tabelSales1', compact('data'));
+                break;
+
+ke view Order.tabelSales1 menampilkan isinya
+
+jika kita masukan jumlah size 
+
+ $(document).on('focus, keyup, change','.qty', function(e){
+          var kode_brand = $(this).val();
+          var idGo =$(this).attr('idGo');
+
+          var sizemin = parseInt($("#sizemin_"+idGo).val());
+          var sizemax = parseInt($("#sizemax_"+idGo).val());
+
+          var subtotal=0;
+
+          for (let i = sizemin; i <= sizemax; i++) {
+            $parseNilai = parseInt($("#"+idGo+'-'+i).val()); //menghasilkan (#1-38)
+            // $parseNilai = parseInt($("#qty_1-39").val());
+
+            $parseNilai = isNaN($parseNilai) ? 0:$parseNilai;
+
+            subtotal += $parseNilai;
+          }
+          // console.log(subtotal);
+          $('#subtotal_'+idGo).html(subtotal);
+          $('#subtot_'+idGo).val(subtotal);
+
+          var jmhSubTot = $('.subtotal').length;          
+
+          var total=0;
+          for (let index = 1; index <= jmhSubTot; index++) {
+
+              var subtot = parseFloat($("#subtotal_"+index).html()); //ambil dari tag <b>
+              // var subtot = parseFloat($("#subtotal_"+index).text());
+              // var subtot = parseFloat($("#subtot_"+index).val());
+              total +=subtot;
+          }
+          $('#total').html(total);
+          $('#simpanpo').removeAttr('disabled'); 
+          
+          
+
+
+        });
+
+
+
+
+
+
+
+
+
+

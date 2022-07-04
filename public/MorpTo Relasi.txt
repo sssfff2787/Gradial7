@@ -1,0 +1,30 @@
+MorphTo menurutku adalah metode untuk mengakses tabel 
+
+jadi ada satu tabel yang punya relasi dengan banyak tabel lain
+misalnya ada 3 tabel :
+1. Users -> Modelnya namanya User
+2. Posts -> Modelnya namanya Post
+3. Images -> modelnya namanya Image
+
+struktur tabelnya sbb :
+posts
+    id - integer
+    name - string
+ 
+users
+    id - integer
+    name - string
+ 
+images
+    id - integer
+    url - string
+    imageable_id - integer
+    imageable_type - string
+
+jadi tabel image ini untuk menampung data gambar yang di mana dia memilki relasi dengan
+users dan posts. imageable_type ini akan menampung dia berelasi dengan siapa (users atau posts)
+sedangakn imageable_id untuk menambung idnya.
+
+contoh : 
+imageable_type = users & imageable_id = 1
+artinya tabel image berelasi dengan users yang ber id =1

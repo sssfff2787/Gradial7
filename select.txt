@@ -1,0 +1,35 @@
+
+{"kode_sepatu1":1,"kode_brand2":1,"namastyle":"Gradial 1","sizemin":38,"sizemax":43,
+ "sepatu2_model":[{"idsepatu":1,"kode_sepatu2":1,"kodeart":"GD-88001","warna":"Mist + Dusk Pearl Rainbow","ketsepatu":""},
+			{"idsepatu":2,"kode_sepatu2":1,"kodeart":"GD-88002","warna":"Seashell Shimmer + Silver Stripe","ketsepatu":""},
+			{"idsepatu":3,"kode_sepatu2":1,"kodeart":"GD-88003","warna":"Sheashell Shimmer","ketsepatu":""}]},
+{"kode_sepatu1":2,"kode_brand2":1,"namastyle":"Gradial 2","sizemin":38,"sizemax":43,
+ "sepatu2_model":[{"idsepatu":4,"kode_sepatu2":2,"kodeart":"GD-88004","warna":"Mist + Dusk Pearl Rainbow","ketsepatu":""},
+			{"idsepatu":5,"kode_sepatu2":2,"kodeart":"GD-88005","warna":"Seashell Shimmer + Silver Stripe","ketsepatu":""},
+			{"idsepatu":6,"kode_sepatu2":2,"kodeart":"GD-88006","warna":"Sheashell Shimmer","ketsepatu":""}]},
+{"kode_sepatu1":3,"kode_brand2":1,"namastyle":"Gradial 3","sizemin":38,"sizemax":43,
+ "sepatu2_model":[{"idsepatu":7,"kode_sepatu2":3,"kodeart":"GD-88007","warna":"Mist + Dusk Pearl Rainbow","ketsepatu":""},
+			{"idsepatu":8,"kode_sepatu2":3,"kodeart":"GD-88008","warna":"Seashell Shimmer + Silver Stripe","ketsepatu":""},
+			{"idsepatu":9,"kode_sepatu2":3,"kodeart":"GD-88009","warna":"Sheashell Shimmer","ketsepatu":""}]}]
+
+http://localhost/Gradial6/public/order/sepatu2_2_3_10
+{"2":"3","3":"10"}
+
+
+$data['idsepatu'] =$idsepatu;
+$data['sepatu2'] =Sepatu2Model::whereIn('idsepatu',$idsepatu)->get();; 
+return $data['sepatu2'] ;  
+[{"idsepatu":3,"kode_sepatu2":1,"kodeart":"GD-88003","warna":"Sheashell Shimmer","ketsepatu":""},
+{"idsepatu":10,"kode_sepatu2":4,"kodeart":"FS-22001","warna":"DK. GREY RED STAR","ketsepatu":""}]
+
+
+
+$data['sepatu2'] =Sepatu2Model::find($idsepatu[2])->load('Sepatu1Model');
+return $data['sepatu2'] ;   
+
+{"idsepatu":3,"kode_sepatu2":1,"kodeart":"GD-88003","warna":"Sheashell Shimmer","ketsepatu":"",
+"sepatu1_model":{"kode_sepatu1":1,"kode_brand2":1,"namastyle":"Gradial 1","sizemin":38,"sizemax":43}}
+
+
+
+[{"idsepatu":1,"kode_sepatu2":1,"kodeart":"GD-88001","warna":"Mist + Dusk Pearl Rainbow","ketsepatu":""},{"idsepatu":2,"kode_sepatu2":1,"kodeart":"GD-88002","warna":"Seashell Shimmer + Silver Stripe","ketsepatu":""},{"idsepatu":3,"kode_sepatu2":1,"kodeart":"GD-88003","warna":"Sheashell Shimmer","ketsepatu":""}]
